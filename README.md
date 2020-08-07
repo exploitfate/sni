@@ -3,8 +3,7 @@ Find a Debian or Ubuntu box with root on a clean public IP and run:
   
 ```bash
 apt update \
-  && apt -y install nano dnsutils curl git sudo \
-  && curl -fsSL https://get.docker.com/ | sh || apt -y install docker.io \
+  && apt -y install git \
   && git clone https://github.com/exploitfate/sni.git \
   && cd ~/sni \
   && ./build.sh
