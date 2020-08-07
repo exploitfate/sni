@@ -3,6 +3,12 @@
 # bomb on any error
 set -e
 
+apt update -qq
+apt -qq -y install nano dnsutils curl git sudo
+curl -fsSL https://get.docker.com/ | sh || apt -qq -y install docker.io
+git clone https://github.com/exploitfate/sni.git
+cd ~/sni
+
 # globals
 CWD=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 [ -e "${CWD}/scripts/globals" ] && . ${CWD}/scripts/globals
