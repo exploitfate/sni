@@ -1,5 +1,5 @@
 #
-# cron.d/netflix-proxy -- schedules periodic updates for DDNs IPs for the netflix proxy
+# cron.d/sni -- schedules periodic updates for DDNs IPs for the netflix proxy
 #
 # Copyright © Patrice Brend'amour <patrice@brendamour.net>
 # distributed under the terms of the Artistic Licence 2.0

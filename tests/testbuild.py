@@ -94,7 +94,7 @@ def args():
     digitalocean.add_argument('--client_ip', type=str, required=False, default=get_public_ip(), help='client IP to secure Droplet')
     digitalocean.add_argument('--fingerprint', nargs='+', type=str, required=False, default=DEFAULT_FINGERPRINT, help='SSH key fingerprint')
     digitalocean.add_argument('--region', type=str, required=False, default=DEFAULT_REGION_SLUG, help='region to deploy into; use --list_regions for a list')
-    digitalocean.add_argument('--branch', type=str, required=False, default=DEFAULT_BRANCH, help='netflix-proxy branch to deploy (default: {})'.format(DEFAULT_BRANCH))
+    digitalocean.add_argument('--branch', type=str, required=False, default=DEFAULT_BRANCH, help='sni branch to deploy (default: {})'.format(DEFAULT_BRANCH))
     digitalocean.add_argument('--create', action='store_true', required=False, help='Create droplet')
     digitalocean.add_argument('--destroy', action='store_true', required=False, help='Destroy droplet')
     digitalocean.add_argument('--list_regions', action='store_true', required=False, help='list all available regions')
@@ -107,8 +107,8 @@ def create_droplet(s, name, fps, region, cip=get_public_ip(), branch=DEFAULT_BRA
     user_data = '''#cloud-config
 
 runcmd:
-  - [ git, clone, -b, {}, "https://github.com/ab77/netflix-proxy" ]
-  - cd netflix-proxy
+  - [ git, clone, -b, {}, "https://github.com/exploitfate/sni" ]
+  - cd sni
   - [ bash, -c, "./build.sh -c {}" ]'''.format(branch, cip)
 
     if verbose: logger('user_data={}'.format(user_data))
@@ -387,7 +387,7 @@ if __name__ == '__main__':
                 result = docker_test(droplet_ip)
                 if not result: exit(1)
                 
-                logger(colored('Testing netflix-proxy on Droplet with name = {}, ipaddr = {}...'.format(name, droplet_ip), 'yellow'))
+                logger(colored('Testing sni on Droplet with name = {}, ipaddr = {}...'.format(name, droplet_ip), 'yellow'))
                 rc = netflix_proxy_test(droplet_ip)
                 if rc > 0: exit(rc)
         

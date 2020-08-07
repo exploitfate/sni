@@ -1,5 +1,5 @@
 [Unit]
-Description=netflix-proxy admin service
+Description=sni admin service
 Requires=docker.service
 After=docker.service
 

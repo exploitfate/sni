@@ -26,7 +26,7 @@ before_install:
   -iv $encrypted_45757fbb12c0_iv -in id_rsa.travis.enc -out id_rsa.travis -d
 - export CHROME_BIN=/usr/bin/google-chrome
 - export DISPLAY=:99.0
-- /sbin/start-stop-daemon --start --quiet --pidfile /tmp/netflix-proxy_xvfb_99.pid
+- /sbin/start-stop-daemon --start --quiet --pidfile /tmp/sni_xvfb_99.pid
   --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16
 - sudo apt-get -y update
 - sudo apt-get -y install -y libappindicator1 fonts-liberation

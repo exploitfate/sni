@@ -28,4 +28,4 @@ Caddyfile
 dnsmasq.conf
 docker-compose.yml
 docker-sniproxy/sniproxy.conf
-netflix-proxy.log
+sni.log

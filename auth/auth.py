@@ -278,7 +278,7 @@ def flash_messages(group=None):
 
 
 web.config.debug = DEBUG
-web.config.session_parameters['cookie_name'] = 'netflix-proxy-admin'
+web.config.session_parameters['cookie_name'] = 'sni-admin'
 
 urls = (
     r'/login', 'Login',

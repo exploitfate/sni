@@ -2,7 +2,7 @@
 
 token=${1}
 user=ab77
-repository=netflix-proxy
+repository=sni
 
 if [[ -z ${1} ]]; then
     printf "Usage: ${0} <travis-ci-token>\n" 
