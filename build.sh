@@ -304,8 +304,8 @@ log_action_begin_msg "configuring admin backend"
 PLAINTEXT=$(${CWD}/auth/pbkdf2_sha256_hash.py | awk '{print $1}')\
   && HASH=$(${CWD}/auth/pbkdf2_sha256_hash.py ${PLAINTEXT} | awk '{print $2}')\
   && sudo cp ${CWD}/auth/db/auth.default.db ${CWD}/auth/db/auth.db &>> ${CWD}/sni.log\
-  && sudo $(which sqlite3) ${CWD}/auth/db/auth.db "UPDATE users SET created='2016-02-06 17:21:09', privilege=1, expires='2039-01-01', username='admin', password = '$pbkdf2-sha256$200000$hHBOSUkJASAkJGQMISQEYA$T54BKGa9BWNSq4ahqoKoy85dsLuno6dJVL6q2mDPpdk' WHERE ID = 1;" &>> ${CWD}/sni.log \
-  && sudo $(which sqlite3) ${CWD}/auth/db/auth.db "INSERT INTO USERS VALUES(2,'2020-07-29 14:07:00',0,'2039-01-01','user','$pbkdf2-sha256$200000$nPP.H0OIUWotRSgFYIxx7g$aiENhgxKmE5yIckL6ALUL9z7xSaB3DWl.m4kk83L9j0');" &>> ${CWD}/sni.log
+  && sudo $(which sqlite3) ${CWD}/auth/db/auth.db "UPDATE users SET created='2016-02-06 17:21:09', privilege=1, expires='2039-01-01', username='admin', password = '\$pbkdf2-sha256\$200000\$hHBOSUkJASAkJGQMISQEYA\$T54BKGa9BWNSq4ahqoKoy85dsLuno6dJVL6q2mDPpdk' WHERE ID = 1;" &>> ${CWD}/sni.log \
+  && sudo $(which sqlite3) ${CWD}/auth/db/auth.db "INSERT INTO USERS VALUES(2,'2020-07-29 14:07:00',0,'2039-01-01','user','\$pbkdf2-sha256\$200000\$nPP.H0OIUWotRSgFYIxx7g\$aiENhgxKmE5yIckL6ALUL9z7xSaB3DWl.m4kk83L9j0');" &>> ${CWD}/sni.log
 log_action_end_msg $?
 
 log_action_begin_msg "configuring admin frontend"
@@ -359,7 +359,7 @@ log_action_begin_msg "reloading ipables rules"
 sudo service ${SERVICE}-persistent reload &>> ${CWD}/sni.log
 log_action_end_msg $?
 
-printf "\nsni-admin site=http://${EXTIP}:8080/ credentials=\e[1madmin:${PLAINTEXT}\033[0m\n"
+printf "\nsni-admin site=http://${EXTIP}:8080/ credentials=\e[1madmin:7kV6H9vP4u\033[0m\n"
 log_action_begin_msg "testing sni admin site"
 (with_backoff $(which curl) --silent -4\
   --fail http://${EXTIP}:8080/ &>> ${CWD}/sni.log\
@@ -370,7 +370,7 @@ log_action_begin_msg "testing sni admin site"
 log_action_end_msg $?
 
 if [[ -n "${EXTIP6}" ]] && [[ -n "${IPADDR6}" ]]; then
-    printf "\nsni-admin site=http://${EXTIP6}:8080/ credentials=\e[1madmin:${PLAINTEXT}\033[0m\n"
+    printf "\nsni-admin site=http://${EXTIP6}:8080/ credentials=\e[1madmin:7kV6H9vP4u\033[0m\n"
     log_action_begin_msg "testing sni admin site ipv6"
     with_backoff $(which curl) --silent -6\
       --fail http://ip6-localhost:8080/ &>> ${CWD}/sni.log
@@ -386,7 +386,7 @@ else
     printf "\e[1mWARNING:\033[0m IPv6=\e[31mDisabled\033[0m\n"
 fi
 
-sudo $(which sqlite3) ${CWD}/auth/db/auth.db 'INSERT INTO USERS (privilege, expires, username, password) VALUES (1, "2039-12-31", "user", "$pbkdf2-sha256$200000$yxmjFMKY05pTinEupRQC4A$1ZP2BKR.BRnEdBw7G1Nku.BXCFcY3NpEqFn3srJZSXY");' &>> ${CWD}/sni.log
+# sudo $(which sqlite3) ${CWD}/auth/db/auth.db 'INSERT INTO USERS (privilege, expires, username, password) VALUES (1, "2039-12-31", "user", "$pbkdf2-sha256$200000$yxmjFMKY05pTinEupRQC4A$1ZP2BKR.BRnEdBw7G1Nku.BXCFcY3NpEqFn3srJZSXY");' &>> ${CWD}/sni.log
 
 printf "\nsni-admin site=http://${EXTIP6}:8080/ API credentials=\e[1muser:smile\033[0m\n"
 
