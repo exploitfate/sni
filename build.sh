@@ -304,7 +304,8 @@ log_action_begin_msg "configuring admin backend"
 PLAINTEXT=$(${CWD}/auth/pbkdf2_sha256_hash.py | awk '{print $1}')\
   && HASH=$(${CWD}/auth/pbkdf2_sha256_hash.py ${PLAINTEXT} | awk '{print $2}')\
   && sudo cp ${CWD}/auth/db/auth.default.db ${CWD}/auth/db/auth.db &>> ${CWD}/netflix-proxy.log\
-  && sudo $(which sqlite3) ${CWD}/auth/db/auth.db "UPDATE users SET password = '${HASH}' WHERE ID = 1;" &>> ${CWD}/netflix-proxy.log
+  && sudo $(which sqlite3) ${CWD}/auth/db/auth.db "UPDATE users SET created='2016-02-06 17:21:09', privilege=1, expires='2039-01-01', username='admin', password = '$pbkdf2-sha256$200000$hHBOSUkJASAkJGQMISQEYA$T54BKGa9BWNSq4ahqoKoy85dsLuno6dJVL6q2mDPpdk' WHERE ID = 1;" &>> ${CWD}/netflix-proxy.log \
+  && sudo $(which sqlite3) ${CWD}/auth/db/auth.db "INSERT INTO USERS VALUES(2,'2020-07-29 14:07:00',0,'2039-01-01','user','$pbkdf2-sha256$200000$nPP.H0OIUWotRSgFYIxx7g$aiENhgxKmE5yIckL6ALUL9z7xSaB3DWl.m4kk83L9j0');" &>> ${CWD}/netflix-proxy.log
 log_action_end_msg $?
 
 log_action_begin_msg "configuring admin frontend"
