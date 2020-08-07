@@ -1,0 +1,32 @@
+user daemon
+
+pidfile /var/run/sniproxy.pid
+
+error_log {
+    syslog daemon
+    #priority notice
+    priority err
+}
+
+listen 80 {
+    proto http
+}
+
+listen 443 {
+    proto tls
+}
+
+resolver {
+  #nameserver 8.8.8.8
+  #nameserver 8.8.4.4
+  #nameserver 1.1.1.1
+  #nameserver 1.0.0.1
+
+  nameserver 127.0.0.53
+  mode ipv4_only
+}
+
+table {
+    .* *
+}
+
