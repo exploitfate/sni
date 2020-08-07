@@ -2,11 +2,11 @@
 
 import sys
 from passlib.hash import pbkdf2_sha256
-from passlib.utils import generate_password
+from passlib.pwd import genword
 
 try:
   plaintext = sys.argv[1]
 except IndexError:
-  plaintext = generate_password()
+  plaintext = genword()
 
 print(plaintext, pbkdf2_sha256.hash(plaintext, rounds=200000, salt_size=16))
