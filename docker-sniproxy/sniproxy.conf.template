@@ -4,21 +4,33 @@ pidfile /var/run/sniproxy.pid
 
 error_log {
     syslog daemon
-    #priority notice
-    priority err
+    priority notice
+    #priority err
 }
 
 listen 80 {
     proto http
+    access_log {
+        syslog daemon
+#        filename /var/log/sniproxy/http_access.log
+        priority notice
+#         priority err
+    }
 }
 
 listen 443 {
     proto tls
+    access_log {
+        syslog daemon
+#        filename /var/log/sniproxy/http_access.log
+        priority notice
+#         priority err
+    }
 }
 
 resolver {
-  nameserver 127.0.0.53
-  #mode ipv4_only
+  nameserver 127.0.0.1
+  mode ipv4_only
 
   #nameserver 8.8.8.8
   #nameserver 8.8.4.4
