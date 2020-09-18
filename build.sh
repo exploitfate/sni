@@ -265,7 +265,7 @@ sudo apt-get -y -qq install ipset-persistent &>> ${CWD}/sni.log
 log_action_end_msg $?
 
 log_action_begin_msg "reload ${SERVICE}-persistent service to enable ipset-persistent"
-systemctl systemctl daemon-reload
+systemctl daemon-reload
 log_action_end_msg $?
 
 
