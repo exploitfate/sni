@@ -155,18 +155,18 @@ fi
 pushd ${CWD} &>> ${CWD}/sni.log
 
 # configure iptables
-if [[ -n "${CLIENTIP}" ]]; then
-    log_action_begin_msg "authorising clientip=${CLIENTIP} on iface=${IFACE}"
-    if [[ "${IS_CLIENT_IPV4}" == '0' ]]; then
-        sudo iptables -t nat -A PREROUTING -s ${CLIENTIP}/32 -i ${IFACE} -j ACCEPT
-    fi
-    if [[ "${IS_CLIENT_IPV6}" == '0' ]]; then
-        sudo ip6tables -t nat -A PREROUTING -s ${CLIENTIP}/128 -i ${IFACE} -j ACCEPT
-    fi
-    log_action_end_msg $?
-else
-    log_action_cont_msg "unable to resolve and authorise client ip"
-fi
+#####if [[ -n "${CLIENTIP}" ]]; then
+#####    log_action_begin_msg "authorising clientip=${CLIENTIP} on iface=${IFACE}"
+#####    if [[ "${IS_CLIENT_IPV4}" == '0' ]]; then
+#####        sudo iptables -t nat -A PREROUTING -s ${CLIENTIP}/32 -i ${IFACE} -j ACCEPT
+#####    fi
+#####    if [[ "${IS_CLIENT_IPV6}" == '0' ]]; then
+#####        sudo ip6tables -t nat -A PREROUTING -s ${CLIENTIP}/128 -i ${IFACE} -j ACCEPT
+#####    fi
+#####    log_action_end_msg $?
+#####else
+#####    log_action_cont_msg "unable to resolve and authorise client ip"
+#####fi
 
 log_action_begin_msg "adding IPv4 iptables rules"
 sudo iptables -t nat -A PREROUTING -i ${IFACE} -p tcp --dport 80 -j REDIRECT --to-port 8080\
@@ -190,7 +190,7 @@ log_action_begin_msg "adding IPv6 iptables rules"
 sudo ip6tables -t nat -A PREROUTING -i ${IFACE} -p tcp --dport 80 -j REDIRECT --to-port 8080\
   && sudo ip6tables -t nat -A PREROUTING -i ${IFACE} -p tcp --dport 443 -j REDIRECT --to-port 8080\
   && sudo ip6tables -t nat -A PREROUTING -i ${IFACE} -p udp --dport 53 -j REDIRECT --to-port 5353\
-  && sudo iptables -t nat -A POSTROUTING -o ${IFACE} -j MASQUERADE\
+  && sudo ip6tables -t nat -A POSTROUTING -o ${IFACE} -j MASQUERADE\
   && sudo ip6tables -A INPUT -p ipv6-icmp -j ACCEPT\
   && sudo ip6tables -A INPUT -i lo -j ACCEPT\
   && sudo ip6tables -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT\
@@ -257,6 +257,40 @@ if [[ ${SERVICE} == "iptables" ]]; then
         log_action_end_msg $?
     fi
 fi
+
+log_action_begin_msg "installing ipset-persistent service"
+ipset-persistent
+sudo apt-get -y install ipset-persistent &>> ${CWD}/sni.log
+log_action_end_msg $?
+
+log_action_begin_msg "reload ${SERVICE}-persistent service to enable ipset-persistent"
+systemctl systemctl daemon-reload
+log_action_end_msg $?
+
+
+log_action_begin_msg "create sniproxy ipset"
+ipset create -exist sniproxy6 hash:net family inet6 hashsize 1048576 maxelem 1048576
+ipset create -exist sniproxy hash:net family inet hashsize 1048576 maxelem 1048576
+log_action_end_msg $?
+
+# configure iptables
+if [[ -n "${CLIENTIP}" ]]; then
+    log_action_begin_msg "authorising clientip=${CLIENTIP} sniproxy ipset"
+    if [[ "${IS_CLIENT_IPV4}" == '0' ]]; then
+        sudo ipset add -exist sniproxy ${CLIENTIP}
+    fi
+    if [[ "${IS_CLIENT_IPV6}" == '0' ]]; then
+        sudo ipset add -exist sniproxy6 ${CLIENTIP}
+    fi
+    log_action_end_msg $?
+else
+    log_action_cont_msg "unable to resolve and authorise client ip"
+fi
+
+log_action_begin_msg "Add iptables rule with sniproxy ipset match"
+sudo ip6tables -t nat -I PREROUTING -m set --match-set sniproxy6 src -i ${IFACE} -j ACCEPT
+sudo iptables -t nat -I PREROUTING -m set --match-set sniproxy src -i ${IFACE} -j ACCEPT
+log_action_end_msg $?
 
 log_action_begin_msg "saving iptables rules"
 sudo service ${SERVICE}-persistent save &>> ${CWD}/sni.log
