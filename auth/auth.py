@@ -33,7 +33,11 @@ except ImportError:
 def run_ipt_cmd(ipaddr, op):
     iface = get_iface()
     web.debug('DEBUG: public iface=%s ipaddr=%s' % (iface, ipaddr))
-    ipt_cmd = 'iptables -t nat -%s PREROUTING -s %s/32 -i %s -j ACCEPT -v && iptables-save > /etc/iptables/rules.v4' % (op, ipaddr, iface)
+    ipt_cmd = ''
+    if op == 'I':
+        ipt_cmd = 'ipset add -exist sniproxy %s && service netfilter-persistent save' % ipaddr
+    if op == 'D':
+        ipt_cmd = 'ipset del -exist sniproxy %s && service netfilter-persistent save' % ipaddr
     web.debug('DEBUG: ipaddr=%s, op=%s, ipt_cmd=%s' % (ipaddr, op, ipt_cmd))
     p = Popen(ipt_cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE, shell=True)
     output, err = p.communicate()
@@ -44,7 +48,12 @@ def run_ipt_cmd(ipaddr, op):
 def run_ipt6_cmd(ipaddr, op):
     iface = get_iface()
     web.debug('DEBUG: public iface=%s ipaddr=%s' % (iface, ipaddr))
-    ipt_cmd = 'ip6tables -t nat -%s PREROUTING -s %s/128 -i %s -j ACCEPT -v && ip6tables-save > /etc/iptables/rules.v6' % (op, ipaddr, iface)
+    ipt_cmd = ''
+    if op == 'I':
+        ipt_cmd = 'ipset add -exist sniproxy6 %s && service netfilter-persistent save' % ipaddr
+    if op == 'D':
+        ipt_cmd = 'ipset del -exist sniproxy6 %s && service netfilter-persistent save' % ipaddr
+
     web.debug('DEBUG: ipaddr=%s, op=%s, ipt_cmd=%s' % (ipaddr, op, ipt_cmd))
     p = Popen(ipt_cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE, shell=True)
     output, err = p.communicate()
