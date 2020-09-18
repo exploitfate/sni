@@ -81,8 +81,9 @@ log_action_end_msg $?
 
 log_action_begin_msg "testing available ports"
 for port in 80 443 53; do
-    ! netstat -a -n -p | grep LISTEN | grep -P '\d+\.\d+\.\d+\.\d+::${port}' > /dev/null\
-      || (printf "required port ${port} already in use\n" && exit 1)
+    ###! netstat -a -n -p | grep LISTEN | grep -P '\d+\.\d+\.\d+\.\d+::${port}' > /dev/null\
+    ###  || (printf "required port ${port} already in use\n" && exit 1)
+    ! ss -H -lptn "sport = :$port"|grep $port > /dev/null || (printf "required port ${port} already in use\n" && exit 1)
 done
 log_action_end_msg $?
 
@@ -259,7 +260,6 @@ if [[ ${SERVICE} == "iptables" ]]; then
 fi
 
 log_action_begin_msg "installing ipset-persistent service"
-ipset-persistent
 sudo apt-get -y install ipset-persistent &>> ${CWD}/sni.log
 log_action_end_msg $?
 
