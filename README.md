@@ -33,3 +33,15 @@ cd ~/sni/auth
 service sni-admin restart
 docker restart sniproxy
 ```
+
+Rebuild container 
+
+```
+./venv/bin/docker-compose up -d --build sniproxy-service
+```
+
+Login into container 
+
+```
+./venv/bin/docker-compose exec sniproxy-service bash
+```
