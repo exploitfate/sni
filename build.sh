@@ -261,7 +261,7 @@ if [[ ${SERVICE} == "iptables" ]]; then
 fi
 
 log_action_begin_msg "installing ipset-persistent service"
-sudo apt-get -y -qq install ipset-persistent &>> ${CWD}/sni.log
+sudo DEBIAN_FRONTEND=noninteractive apt-get -y -qq install ipset-persistent &>> ${CWD}/sni.log
 log_action_end_msg $?
 
 log_action_begin_msg "reload ${SERVICE}-persistent service to enable ipset-persistent"
