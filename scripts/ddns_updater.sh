@@ -26,13 +26,19 @@ for ROW in $LIST; do
         if [ "$OLDIP" != "$NEWIP" ]; then
                 echo "$(date): Updating $DOMAIN"
                 if [ -n "$OLDIP" ]; then
-                        iptables -t nat -D PREROUTING -s $OLDIP/32 -i $IFACE -j ACCEPT -v && iptables-save > /etc/iptables/rules.v4 || iptables-save > /etc/iptables.rules
+                        /usr/sbin/ipset del -exist sniproxy $OLDIP
                 fi
-                iptables -t nat -I PREROUTING -s $NEWIP/32 -i $IFACE -j ACCEPT -v && iptables-save > /etc/iptables/rules.v4 || iptables-save > /etc/iptables.rules
+                if [ -n "$NEWIP" ]; then
+                        /usr/sbin/ipset add -exist sniproxy $NEWIP
+                fi
+
+
 
                 #UPDATE database
                 sudo $(which sqlite3) ${SQLITE_DB} "UPDATE DDNS SET last_ipaddr = '${NEWIP}' WHERE domain = '${DOMAIN}'"
         fi
-done 
+done
+
+/usr/sbin/service netfilter-persistent save
 
 exit 0
