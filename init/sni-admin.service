@@ -7,6 +7,8 @@ After=docker.service
 Restart=always
 WorkingDirectory={{CWD}}/auth
 ExecStart=/bin/bash -c '. {{CWD}}/venv/bin/activate && {{CWD}}/venv/bin/python auth.py 43867'
+StandardOutput=file:/var/log/sni-admin.log
+StandardError=file:/var/log/sni-admin.log
 
 [Install]
 WantedBy=multi-user.target
