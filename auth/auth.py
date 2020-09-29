@@ -552,6 +552,13 @@ class ApiDDNSDel:
                 traceback.print_exc()
             )
 
+        results = db.query(
+            'SELECT * FROM DDNS WHERE domain=$domain AND user_id=$user_id',
+            vars={
+                'domain': domain,
+                'user_id': userid
+            }
+        )
         domains = [dom['domain'] for dom in results]
         if domain not in domains:
             return 'Error: DDNS not found.'
