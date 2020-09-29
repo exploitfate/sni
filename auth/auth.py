@@ -531,6 +531,17 @@ class ApiDDNSDel:
                 'user_id': userid
             }
         )
+        for row in results:
+            lastip = row['last_ipaddr']
+            is_ipv4 = web.net.validipaddr(lastip)
+            is_ipv6 = web.net.validip6addr(lastip)
+            if is_ipv4:
+                result = run_ipt_cmd(lastip, 'D')
+                web.debug('iptables_update: %s' % [result])
+            if is_ipv6:
+                result = run_ipt6_cmd(lastip, 'D')
+                web.debug('ip6tables_update: %s' % [result])
+
         domains = [dom['domain'] for dom in results]
         if domain not in domains:
             return 'Error: DDNS not found.'
