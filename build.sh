@@ -102,6 +102,11 @@ if [[ $(cat /proc/swaps | wc -l) -le 1 ]]; then
     log_action_end_msg $?
 fi
 
+log_action_begin_msg "installing net-tools"
+sudo apt-get -y update &>> ${CWD}/netflix-proxy.log\
+  && sudo apt-get -y install net-tools &>> ${CWD}/netflix-proxy.log
+log_action_end_msg $?
+
 # obtain the interface with the default gateway
 IFACE=$(get_iface 4)
 
@@ -334,6 +339,7 @@ sudo apt-get -y update &>> ${CWD}/sni.log\
   && sudo apt-get -y install git python3.6 python3-venv python3-pip sqlite3 &>> ${CWD}/sni.log\
   && python3 -m venv venv &>> ${CWD}/sni.log\
   && source venv/bin/activate &>> ${CWD}/sni.log\
+  && pip3 install pip --upgrade &>> ${CWD}/netflix-proxy.log\
   && pip3 install -r requirements.txt &>> ${CWD}/sni.log\
   && pip3 install -r ${CWD}/auth/requirements.txt &>> ${CWD}/sni.log
 log_action_end_msg $?
